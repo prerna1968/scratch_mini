@@ -1,8 +1,8 @@
-# Scratch Mini 🎨
+# Scratch Mini
 
 Scratch Mini is a lightweight visual coding playground inspired by MIT Scratch. Build scripts by dragging motion and looks blocks, wire them up per sprite, and run the whole scene with a single Play button. When two sprites collide, the hero feature swaps their current animations, making interactions feel alive!
 
-## ✨ Features
+## Features
 
 ### 1. Motion Animations
 - **Move ___ steps**: Move sprites forward by a specified number of steps
@@ -21,7 +21,7 @@ Scratch Mini is a lightweight visual coding playground inspired by MIT Scratch. 
 - **Color-coded sprites**: Each sprite has a unique color for easy identification
 - **Cute sprite characters**: Sprites display with animated faces (eyes and mouth)
 
-### 4. Hero Feature - Collision-Based Animation Swap ⭐
+### 4. Hero Feature - Collision-Based Animation Swap
 - **Collision detection**: Automatically detects when two sprites overlap
 - **Animation swapping**: When sprites collide, their current animations swap
 - **Visual feedback**: Collision triggers a flash animation on both sprites
@@ -69,37 +69,7 @@ src/
     blocks.ts           # helpers for block creation & mutations
 ```
 
-## Deployment
-
-You need to provide both the GitHub repository URL and a live deployment (Vercel, Netlify, or similar).
-
-### Vercel
-
-1. Push this repo to GitHub.
-2. Visit [vercel.com](https://vercel.com) and create a new project.
-3. Import the GitHub repo, keep the defaults:
-   - Build command: `npm run build`
-   - Output directory: `dist`
-4. Deploy. The generated URL is your live link.
-
-### Netlify
-
-1. Push this repo to GitHub.
-2. Head to [app.netlify.com](https://app.netlify.com) → Add new site → Import an existing project.
-3. Choose the GitHub repo and set:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-4. Deploy. Netlify provides the live URL instantly; customise it under Site settings if desired.
-
-### Static Hosting
-
-```bash
-npm run build
-```
-
-Upload the `dist/` folder to any static host (S3, Cloudflare Pages, GitHub Pages). For GitHub Pages you can deploy with `npm i -g vercel` or `netlify-cli`, or copy the contents into the `gh-pages` branch.
-
-## 🎮 How to Use
+## How to Use
 
 ### Basic Usage
 1. **Select a sprite**: Click on any sprite in the sprite strip to select it
@@ -141,7 +111,7 @@ Upload the `dist/` folder to any static host (S3, Cloudflare Pages, GitHub Pages
    - A **notification banner** appears at the top showing the collision
 7. The swapped animations continue until the scripts complete
 
-### Pro Tips 💡
+### Pro Tips
 - Use the **Repeat** block to create complex looping animations
 - Combine **Move** and **Turn** blocks to create circular paths
 - Use **Say** blocks to debug or show sprite status
