@@ -45,6 +45,15 @@ npm install
 # start the dev server
 npm run dev
 
+# run tests
+npm test
+
+# run tests with UI
+npm run test:ui
+
+# run tests with coverage
+npm run test:coverage
+
 # run lint checks
 npm run lint
 
@@ -53,6 +62,27 @@ npm run build
 ```
 
 The app ships with Vite + React 19 + TypeScript + @dnd-kit for drag-and-drop.
+
+## Testing
+
+The project includes comprehensive test coverage using Vitest and React Testing Library:
+
+**Test Coverage:**
+- ✅ **Utility Functions** (`blocks.test.ts`) - Tests for block creation, cloning, updating, and removal
+- ✅ **Runtime Logic** (`runtime.test.ts`) - Tests for collision detection, queue swapping, and delay functions
+- ✅ **Component Tests** (`Palette.test.tsx`) - Tests for UI components rendering
+
+**Running Tests:**
+```bash
+# Run all tests
+npm test
+
+# Run tests with UI dashboard
+npm run test:ui
+
+# Run tests with coverage report
+npm run test:coverage
+```
 
 ## Project Structure
 
