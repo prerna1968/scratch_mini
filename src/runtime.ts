@@ -12,6 +12,7 @@ export type RuntimeContext = {
   onThink: (s: Sprite, text: string, ms: number) => void
   onCollision?: (a: Sprite, b: Sprite) => void
   shouldStop: () => boolean
+  collisionPairs?: Set<string>
 }
 
 
@@ -27,6 +28,7 @@ function aabbOverlap(a: Sprite, b: Sprite) {
 
 export function checkCollisionsAndSwap(
   sprites: Sprite[],
+  collisionPairs: Set<string>,
   onSwap?: (a: Sprite, b: Sprite) => void,
   onCollision?: (a: Sprite, b: Sprite) => void
 ) {
@@ -34,10 +36,24 @@ export function checkCollisionsAndSwap(
     for (let j = i + 1; j < sprites.length; j++) {
       const a = sprites[i]
       const b = sprites[j]
-      if (aabbOverlap(a, b)) {
-        const tmp = a.currentAnimation ?? null
+      
+      // Create a unique pair key (order-independent)
+      const pairKey = [a.id, b.id].sort().join('-')
+      
+      if (aabbOverlap(a, b) && !collisionPairs.has(pairKey)) {
+        // Mark this pair as collided to prevent multiple swaps
+        collisionPairs.add(pairKey)
+        
+        // Swap the actual scripts arrays
+        const tmpScripts = a.scripts
+        a.scripts = b.scripts
+        b.scripts = tmpScripts
+        
+        // Swap animation indicator
+        const tmpAnim = a.currentAnimation ?? null
         a.currentAnimation = b.currentAnimation ?? null
-        b.currentAnimation = tmp
+        b.currentAnimation = tmpAnim
+        
         a._flash = true
         b._flash = true
         if (onSwap) onSwap(a, b)
@@ -127,6 +143,7 @@ export async function runBlock(
 
   checkCollisionsAndSwap(
     ctx.sprites,
+    ctx.collisionPairs ?? new Set(),
     (a, b) => {
       ctx.onUpdate(a)
       ctx.onUpdate(b)

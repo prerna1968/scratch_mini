@@ -182,6 +182,7 @@ export default function App() {
 
     const ctx: RuntimeContext = {
       sprites: workingSprites,
+      collisionPairs: new Set<string>(),
       onUpdate: syncSpriteRuntimeState,
       onSay: (sprite, text, ms) => {
         setBubble(sprite.id, text, 'say', ms)
