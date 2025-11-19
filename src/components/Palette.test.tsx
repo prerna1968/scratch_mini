@@ -11,7 +11,7 @@ describe('Palette Component', () => {
       </DndContext>
     )
     
-    expect(screen.getByText('Motion')).toBeInTheDocument()
+    expect(screen.getByText('Motion')).not.toBeNull()
   })
 
   it('should render looks category', () => {
@@ -21,7 +21,7 @@ describe('Palette Component', () => {
       </DndContext>
     )
     
-    expect(screen.getByText('Looks')).toBeInTheDocument()
+    expect(screen.getByText('Looks')).not.toBeNull()
   })
 
   it('should render all motion blocks', () => {
@@ -31,10 +31,10 @@ describe('Palette Component', () => {
       </DndContext>
     )
     
-    expect(screen.getByText('Move steps')).toBeInTheDocument()
-    expect(screen.getByText('Turn degrees')).toBeInTheDocument()
-    expect(screen.getByText('Go to x/y')).toBeInTheDocument()
-    expect(screen.getByText('Repeat')).toBeInTheDocument()
+    expect(screen.getByText('Move steps')).not.toBeNull()
+    expect(screen.getByText('Turn degrees')).not.toBeNull()
+    expect(screen.getByText('Go to x/y')).not.toBeNull()
+    expect(screen.getByText('Repeat')).not.toBeNull()
   })
 
   it('should render all looks blocks', () => {
@@ -44,8 +44,8 @@ describe('Palette Component', () => {
       </DndContext>
     )
     
-    expect(screen.getByText(/Say/)).toBeInTheDocument()
-    expect(screen.getByText(/Think/)).toBeInTheDocument()
+    expect(screen.getByText(/Say/)).not.toBeNull()
+    expect(screen.getByText(/Think/)).not.toBeNull()
   })
 })
 
