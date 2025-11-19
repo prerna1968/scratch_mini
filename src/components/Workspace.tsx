@@ -5,7 +5,7 @@ import type { Block, Sprite } from '../types'
 type WorkspaceProps = {
   sprite: Sprite
   disabled?: boolean
-  onUpdateBlockParams: (blockId: string, params: Record<string, unknown>) => void
+  onUpdateBlockParams: (blockId: string, params: Record<string, string | number | undefined>) => void
   onRemoveBlock: (blockId: string) => void
 }
 
@@ -155,7 +155,12 @@ function BlockItem({ block, spriteId, disabled, onUpdateBlockParams, onRemoveBlo
         <BlockParamsEditor
           block={block}
           disabled={disabled}
-          onUpdate={(params) => onUpdateBlockParams(block.id, params)}
+          onUpdate={(params) =>
+            onUpdateBlockParams(
+              block.id,
+              params as Record<string, string | number | undefined>
+            )
+          }
         />
       </div>
       {isRepeat && (

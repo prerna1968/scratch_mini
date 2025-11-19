@@ -107,7 +107,7 @@ export default function App() {
     updateSpriteScripts(dropData.spriteId, (blocks) => appendBlock(blocks, dropData.parentId, newBlock))
   }
 
-  const handleUpdateBlockParams = (spriteId: string, blockId: string, params: Record<string, unknown>) => {
+  const handleUpdateBlockParams = (spriteId: string, blockId: string, params: Record<string, string | number | undefined>) => {
     updateSpriteScripts(spriteId, (blocks) => updateBlockParams(blocks, blockId, params))
   }
 
@@ -183,6 +183,8 @@ export default function App() {
     const ctx: RuntimeContext = {
       sprites: workingSprites,
       collisionPairs: new Set<string>(),
+      scriptMapping: new Map<string, string>(),
+      executionQueues: new Map(),
       onUpdate: syncSpriteRuntimeState,
       onSay: (sprite, text, ms) => {
         setBubble(sprite.id, text, 'say', ms)
@@ -191,7 +193,7 @@ export default function App() {
         setBubble(sprite.id, text, 'think', ms)
       },
       onCollision: (a, b) => {
-        const message = `🎉 Collision! ${a.name} ↔️ ${b.name} - Animations swapped!`
+        const message = `Collision! ${a.name} ↔️ ${b.name} - Animations swapped!`
         setCollisionMessage(message)
         window.clearTimeout(collisionTimeoutRef.current)
         collisionTimeoutRef.current = window.setTimeout(() => {

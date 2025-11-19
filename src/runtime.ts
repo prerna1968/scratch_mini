@@ -13,6 +13,8 @@ export type RuntimeContext = {
   onCollision?: (a: Sprite, b: Sprite) => void
   shouldStop: () => boolean
   collisionPairs?: Set<string>
+  scriptMapping?: Map<string, string>
+  executionQueues?: Map<string, Block[]>
 }
 
 
@@ -29,26 +31,29 @@ function aabbOverlap(a: Sprite, b: Sprite) {
 export function checkCollisionsAndSwap(
   sprites: Sprite[],
   collisionPairs: Set<string>,
+  scriptMapping: Map<string, string>,
+  executionQueues: Map<string, Block[]>,
   onSwap?: (a: Sprite, b: Sprite) => void,
   onCollision?: (a: Sprite, b: Sprite) => void
 ) {
   for (let i = 0; i < sprites.length; i++) {
     for (let j = i + 1; j < sprites.length; j++) {
       const a = sprites[i]
-      const b = sprites[j]
-      
-      // Create a unique pair key (order-independent)
+      const b = sprites[j]      
       const pairKey = [a.id, b.id].sort().join('-')
       
       if (aabbOverlap(a, b) && !collisionPairs.has(pairKey)) {
-        // Mark this pair as collided to prevent multiple swaps
         collisionPairs.add(pairKey)
-        
-        // Swap the actual scripts arrays
-        const tmpScripts = a.scripts
-        a.scripts = b.scripts
-        b.scripts = tmpScripts
-        
+
+        const queueA = executionQueues.get(a.id) ?? []
+        const queueB = executionQueues.get(b.id) ?? []
+        executionQueues.set(a.id, queueB)
+        executionQueues.set(b.id, queueA)
+        const aTarget = scriptMapping.get(a.id) ?? a.id
+        const bTarget = scriptMapping.get(b.id) ?? b.id
+        scriptMapping.set(a.id, bTarget)
+        scriptMapping.set(b.id, aTarget)
+
         // Swap animation indicator
         const tmpAnim = a.currentAnimation ?? null
         a.currentAnimation = b.currentAnimation ?? null
@@ -144,6 +149,8 @@ export async function runBlock(
   checkCollisionsAndSwap(
     ctx.sprites,
     ctx.collisionPairs ?? new Set(),
+    ctx.scriptMapping ?? new Map(),
+    ctx.executionQueues ?? new Map(),
     (a, b) => {
       ctx.onUpdate(a)
       ctx.onUpdate(b)
@@ -163,13 +170,42 @@ export async function runScript(
   }
 }
 
+function flattenBlocks(blocks: Block[]): Block[] {
+  const result: Block[] = []
+
+  for (const block of blocks) {
+    if (block.type === 'repeat') {
+      const times = Math.max(0, Math.min(50, Number(block.params.times) || 0))
+      const children = block.children ?? []
+      for (let i = 0; i < times; i++) {
+        result.push(...flattenBlocks(children))
+      }
+    } else {
+      result.push(block)
+    }
+  }
+
+  return result
+}
+
 export async function runSpriteScripts(
   sprite: Sprite,
   ctx: RuntimeContext
 ) {
+  const allBlocks: Block[] = []
   for (const script of sprite.scripts) {
-    await runScript(sprite, script, ctx)
+    allBlocks.push(...flattenBlocks(script.blocks))
+  }
+  if (!ctx.executionQueues) {
+    ctx.executionQueues = new Map()
+  }
+  ctx.executionQueues.set(sprite.id, [...allBlocks])
+  while (ctx.executionQueues.get(sprite.id)?.length) {
+    const block = ctx.executionQueues.get(sprite.id)?.shift()
+    if (!block) break
     if (ctx.shouldStop()) return
+
+    await runBlock(sprite, block, ctx)
   }
   sprite.currentAnimation = null
   ctx.onUpdate(sprite)
