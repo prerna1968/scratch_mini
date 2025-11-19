@@ -85,7 +85,7 @@ export function appendBlock(
 export function updateBlockParams(
   blocks: Block[],
   blockId: string,
-  params: Record<string, unknown>
+  params: Record<string, string | number | undefined>
 ): Block[] {
   return blocks.map((block) => {
     if (block.id === blockId) {
