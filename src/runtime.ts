@@ -47,17 +47,28 @@ export function checkCollisionsAndSwap(
 
         const queueA = executionQueues.get(a.id) ?? []
         const queueB = executionQueues.get(b.id) ?? []
-        executionQueues.set(a.id, queueB)
-        executionQueues.set(b.id, queueA)
+        
+        const motionQueueA = queueA.filter(block => block.type !== 'say' && block.type !== 'think')
+        const motionQueueB = queueB.filter(block => block.type !== 'say' && block.type !== 'think')
+        const looksQueueA = queueA.filter(block => block.type === 'say' || block.type === 'think')
+        const looksQueueB = queueB.filter(block => block.type === 'say' || block.type === 'think')        
+        executionQueues.set(a.id, [...motionQueueB, ...looksQueueA])
+        executionQueues.set(b.id, [...motionQueueA, ...looksQueueB])
+        
         const aTarget = scriptMapping.get(a.id) ?? a.id
         const bTarget = scriptMapping.get(b.id) ?? b.id
         scriptMapping.set(a.id, bTarget)
         scriptMapping.set(b.id, aTarget)
 
-        // Swap animation indicator
+        // Swap animation indicator only for non-looks actions
         const tmpAnim = a.currentAnimation ?? null
+        const aAnimIsLooks = tmpAnim === 'say' || tmpAnim === 'think'
+        const bAnimIsLooks = (b.currentAnimation ?? null) === 'say' || (b.currentAnimation ?? null) === 'think'
+        
+        if (!aAnimIsLooks && !bAnimIsLooks) {
         a.currentAnimation = b.currentAnimation ?? null
         b.currentAnimation = tmpAnim
+        }
         
         a._flash = true
         b._flash = true

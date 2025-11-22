@@ -92,16 +92,20 @@ describe('runtime collision detection', () => {
       expect(onSwap).not.toHaveBeenCalled()
     })
 
-    it('should swap execution queues on collision', () => {
+    it('should swap motion blocks but keep looks actions with original sprite on collision', () => {
       // Position sprites to overlap
       spriteA.x = 100
       spriteA.y = 100
       spriteB.x = 120
       spriteB.y = 120
 
-      // Set up queues
-      const queueA = ['block1', 'block2']
-      const queueB = ['block3', 'block4']
+      const motionBlockA = { type: 'move', id: 'block1', params: {} }
+      const looksBlockA = { type: 'say', id: 'block2', params: {} }
+      const motionBlockB = { type: 'turn', id: 'block3', params: {} }
+      const looksBlockB = { type: 'think', id: 'block4', params: {} }
+      
+      const queueA = [motionBlockA, looksBlockA]
+      const queueB = [motionBlockB, looksBlockB]
       executionQueues.set('sprite-a', queueA)
       executionQueues.set('sprite-b', queueB)
 
@@ -112,9 +116,16 @@ describe('runtime collision detection', () => {
         executionQueues
       )
 
-      // Queues should be swapped
-      expect(executionQueues.get('sprite-a')).toEqual(queueB)
-      expect(executionQueues.get('sprite-b')).toEqual(queueA)
+      const newQueueA = executionQueues.get('sprite-a')
+      const newQueueB = executionQueues.get('sprite-b')
+      
+      expect(newQueueA).toContain(motionBlockB)
+      expect(newQueueA).toContain(looksBlockA)
+      expect(newQueueB).toContain(motionBlockA)
+      expect(newQueueB).toContain(looksBlockB)
+      
+      expect(newQueueA).not.toContain(looksBlockB)
+      expect(newQueueB).not.toContain(looksBlockA)
     })
 
     it('should mark sprites with flash flag', () => {
@@ -169,7 +180,7 @@ describe('runtime collision detection', () => {
       expect(onCollision).toHaveBeenCalledTimes(1) // Still only 1
     })
 
-    it('should swap animation indicators', () => {
+    it('should swap motion animation indicators but not looks animations', () => {
       // Position sprites to overlap
       spriteA.x = 100
       spriteA.y = 100
@@ -187,6 +198,24 @@ describe('runtime collision detection', () => {
 
       expect(spriteA.currentAnimation).toBe('turn')
       expect(spriteB.currentAnimation).toBe('move')
+    })
+
+    it('should not swap looks animation indicators', () => {
+      spriteA.x = 100
+      spriteA.y = 100
+      spriteA.currentAnimation = 'say'
+      spriteB.x = 120
+      spriteB.y = 120
+      spriteB.currentAnimation = 'think'
+
+      checkCollisionsAndSwap(
+        [spriteA, spriteB],
+        collisionPairs,
+        scriptMapping,
+        executionQueues
+      )
+      expect(spriteA.currentAnimation).toBe('say')
+      expect(spriteB.currentAnimation).toBe('think')
     })
   })
 

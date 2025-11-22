@@ -23,7 +23,8 @@ Scratch Mini is a lightweight visual coding playground inspired by MIT Scratch. 
 
 ### 4. Hero Feature - Collision-Based Animation Swap
 - **Collision detection**: Automatically detects when two sprites overlap
-- **Animation swapping**: When sprites collide, their current animations swap
+- **Motion animation swapping**: When sprites collide, their motion animations (move, turn, goto) swap
+- **Looks actions preserved**: Looks animations (say, think) remain with their original sprite
 - **Visual feedback**: Collision triggers a flash animation on both sprites
 - **Notification system**: Displays a prominent message when collisions occur
 - **Dynamic interaction**: Creates emergent behavior and surprises in the playground
@@ -68,9 +69,9 @@ The app ships with Vite + React 19 + TypeScript + @dnd-kit for drag-and-drop.
 The project includes comprehensive test coverage using Vitest and React Testing Library:
 
 **Test Coverage:**
-- ✅ **Utility Functions** (`blocks.test.ts`) - Tests for block creation, cloning, updating, and removal
-- ✅ **Runtime Logic** (`runtime.test.ts`) - Tests for collision detection, queue swapping, and delay functions
-- ✅ **Component Tests** (`Palette.test.tsx`) - Tests for UI components rendering
+- **Utility Functions** (`blocks.test.ts`) - Tests for block creation, cloning, updating, and removal
+- **Runtime Logic** (`runtime.test.ts`) - Tests for collision detection, queue swapping, and delay functions
+- **Component Tests** (`Palette.test.tsx`) - Tests for UI components rendering
 
 **Running Tests:**
 ```bash
@@ -131,15 +132,16 @@ src/
 
 ### Testing the Hero Feature (Collision Detection)
 1. Create or select two sprites on the stage
-2. For **Sprite 1**: Add "Move 50 steps" + "Repeat 10 times"
-3. For **Sprite 2**: Add "Move -50 steps" (or "Turn 180" then "Move 50") + "Repeat 10 times"
+2. For **Sprite 1**: Add "Say Hello" for 2 seconds + "Move 50 steps" + "Repeat 10 times"
+3. For **Sprite 2**: Add "Think Hmm..." for 2 seconds + "Move -50 steps" + "Repeat 10 times"
 4. Position sprites facing each other on the stage
-5. Click "▶ Play All"
+5. Click "Play All"
 6. Watch for the collision:
    - Both sprites will **flash** with a yellow glow
-   - Their **animations swap** (Sprite 1 adopts Sprite 2's movement and vice versa)
+   - Their **motion animations swap** (move directions exchange)
+   - **Speech/thought bubbles remain with their original sprite** (no interchange)
    - A **notification banner** appears at the top showing the collision
-7. The swapped animations continue until the scripts complete
+7. The swapped motion animations continue, but looks actions stay correct
 
 ### Pro Tips
 - Use the **Repeat** block to create complex looping animations
